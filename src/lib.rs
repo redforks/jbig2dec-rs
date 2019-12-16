@@ -3,6 +3,7 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufReader, Read};
+use std::ops::{Index, IndexMut};
 use std::path::Path;
 use std::ptr;
 use std::slice;
@@ -82,6 +83,20 @@ impl IntoIterator for Document {
 
     fn into_iter(self) -> Self::IntoIter {
         self.images.into_iter()
+    }
+}
+
+impl Index<usize> for Document {
+    type Output = Image;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.images.index(index)
+    }
+}
+
+impl IndexMut<usize> for Document {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        self.images.index_mut(index)
     }
 }
 
