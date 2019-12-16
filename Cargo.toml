@@ -7,6 +7,7 @@ license = "GPL-3.0"
 edition = "2018"
 keywords = ["image", "pdf", "jbig2", "jb2"]
 repository = "https://github.com/messense/jbig2dec-rs"
+readme = "README.md"
 
 [dependencies]
 jbig2dec-sys = { version = "0.1.0", path = "jbig2dec-sys" }
