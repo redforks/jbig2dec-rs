@@ -13,6 +13,7 @@ pub enum Jbig2Severity {
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Jbig2Options {
+    JBIG2_OPTIONS_DEFAULT = 0,
     JBIG2_OPTIONS_EMBEDDED = 1,
 }
 pub type Jbig2Allocator = _Jbig2Allocator;
