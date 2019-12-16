@@ -1,9 +1,9 @@
-use std::ptr;
-use std::path::Path;
-use std::fs::File;
-use std::slice;
-use std::io::{BufReader, Read};
 use std::fmt;
+use std::fs::File;
+use std::io::{BufReader, Read};
+use std::path::Path;
+use std::ptr;
+use std::slice;
 
 use jbig2dec_sys::*;
 
@@ -29,7 +29,7 @@ impl Document {
                 Jbig2Options::JBIG2_OPTIONS_DEFAULT,
                 ptr::null_mut(),
                 None,
-                ptr::null_mut()
+                ptr::null_mut(),
             )
         };
         if ctx.is_null() {
@@ -37,7 +37,9 @@ impl Document {
         }
         let mut content = Vec::new();
         let num_bytes = reader.read_to_end(&mut content).unwrap();
-        unsafe { jbig2_data_in(ctx, content.as_mut_ptr(), num_bytes); }
+        unsafe {
+            jbig2_data_in(ctx, content.as_mut_ptr(), num_bytes);
+        }
         let code = unsafe { jbig2_complete_page(ctx) };
         if code != 0 {
             return Err(Error::IncompletePage);
@@ -52,7 +54,9 @@ impl Document {
             images.push(image);
             unsafe { jbig2_release_page(ctx, page) };
         }
-        unsafe { jbig2_ctx_free(ctx); }
+        unsafe {
+            jbig2_ctx_free(ctx);
+        }
         Ok(Self { images })
     }
 
@@ -121,10 +125,10 @@ impl Image {
 impl fmt::Debug for Image {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         fmt.debug_struct("Image")
-           .field("width", &self.width)
-           .field("height", &self.height)
-           .field("stride", &self.stride)
-           .finish()
+            .field("width", &self.width)
+            .field("height", &self.height)
+            .field("stride", &self.stride)
+            .finish()
     }
 }
 

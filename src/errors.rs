@@ -5,7 +5,7 @@ pub enum Error {
     Io(io::Error),
 
     CreateContextFailed,
-    IncompletePage
+    IncompletePage,
 }
 
 impl From<io::Error> for Error {
