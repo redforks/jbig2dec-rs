@@ -11,17 +11,20 @@ mod errors;
 
 use crate::errors::Error;
 
-#[derive(Debug)]
+/// This struct represents the document structure
+#[derive(Debug, Clone)]
 pub struct Document {
     images: Vec<Image>,
 }
 
 impl Document {
+    /// Open a document from a path
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
         let mut reader = BufReader::new(File::open(path).unwrap());
         Self::from_reader(&mut reader)
     }
 
+    /// Open a document from a `Read`
     pub fn from_reader<R: Read>(reader: &mut R) -> Result<Self, Error> {
         let ctx = unsafe {
             jbig2_ctx_new(
@@ -60,10 +63,12 @@ impl Document {
         Ok(Self { images })
     }
 
+    /// Get images
     pub fn images(&self) -> &[Image] {
         &self.images
     }
 
+    /// Number of images
     pub fn len(&self) -> usize {
         self.images.len()
     }
@@ -78,6 +83,8 @@ impl IntoIterator for Document {
     }
 }
 
+/// This struct represents a image.
+#[derive(Clone, PartialEq)]
 pub struct Image {
     width: u32,
     height: u32,
@@ -101,22 +108,27 @@ impl Image {
         }
     }
 
+    /// Get image width
     pub fn width(&self) -> u32 {
         self.width
     }
 
+    /// Get image height
     pub fn height(&self) -> u32 {
         self.height
     }
 
+    /// Get image stride
     pub fn stride(&self) -> u32 {
         self.stride
     }
 
+    /// Get image data as bytes
     pub fn data(&self) -> &[u8] {
         &self.data
     }
 
+    /// Get image data as mutable bytes
     pub fn data_mut(&mut self) -> &mut [u8] {
         &mut self.data
     }
