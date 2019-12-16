@@ -2,8 +2,12 @@
 name = "jbig2dec-sys"
 version = "0.1.0"
 authors = ["messense <messense@icloud.com>"]
+description = "jbig2dec ffi binding"
+license = "GPL-3.0"
 edition = "2018"
 links = "jbig2dec"
+keywords = ["image", "pdf", "jbig2", "jb2", "ffi"]
+repository = "https://github.com/messense/jbig2dec-rs"
 
 [build-dependencies]
 cc = "1.0.48"
