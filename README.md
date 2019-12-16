@@ -1,8 +1,8 @@
 # jbig2dec-rs
 
 [![GitHub Actions](https://github.com/messense/jbig2dec-rs/workflows/CI/badge.svg)](https://github.com/messense/jbig2dec-rs/actions?query=workflow%3ACI)
-[![Crates.io](https://img.shields.io/crates/v/jbig2dec-rs.svg)](https://crates.io/crates/jbig2dec-rs)
-[![docs.rs](https://docs.rs/jbig2dec-rs/badge.svg)](https://docs.rs/jbig2dec-rs/)
+[![Crates.io](https://img.shields.io/crates/v/jbig2dec.svg)](https://crates.io/crates/jbig2dec)
+[![docs.rs](https://docs.rs/jbig2dec/badge.svg)](https://docs.rs/jbig2dec/)
 
 Rust binding to [jbig2dec](https://github.com/ArtifexSoftware/jbig2dec)
 
