@@ -10,7 +10,15 @@ repository = "https://github.com/messense/jbig2dec-rs"
 readme = "README.md"
 
 [dependencies]
-jbig2dec-sys = { version = "0.1.0", path = "jbig2dec-sys" }
+jbig2dec-sys = { version = "0.1", path = "jbig2dec-sys" }
+image = { version = "0.22", optional = true }
+
+[dev-dependencies]
+image = "0.22"
+
+[features]
+default = ["with-image"]
+with-image = ["image"]
 
 [workspace]
 members = [
