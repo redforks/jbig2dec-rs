@@ -75,6 +75,11 @@ impl Document {
     pub fn len(&self) -> usize {
         self.images.len()
     }
+
+    /// Consumer `self` and return a `Vec<Image>`
+    pub fn into_inner(self) -> Vec<Image> {
+        self.images
+    }
 }
 
 impl IntoIterator for Document {
