@@ -181,7 +181,10 @@ impl TryFrom<&Image> for image::DynamicImage {
             value.height(),
             ColorType::Gray(1),
         )?;
-        Ok(image::load_from_memory(&output)?)
+        let mut img = image::load_from_memory(&output)?;
+        // png natively treats 0 as black, needs to invert it.
+        img.invert();
+        Ok(img)
     }
 }
 
