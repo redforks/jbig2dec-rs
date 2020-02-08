@@ -171,16 +171,20 @@ impl TryFrom<&Image> for image::DynamicImage {
     type Error = image::ImageError;
 
     fn try_from(value: &Image) -> Result<Self, Self::Error> {
-        use image::png::PNGEncoder;
-        use image::ColorType;
+        use image::ImageError;
 
         let mut output = Vec::new();
-        PNGEncoder::new(&mut output).encode(
-            value.data(),
-            value.width(),
-            value.height(),
-            ColorType::Gray(1),
-        )?;
+        {
+            let mut encoder = png::Encoder::new(&mut output, value.width(), value.height());
+            encoder.set_color(png::ColorType::Grayscale);
+            encoder.set_depth(png::BitDepth::One);
+            let mut writer = encoder
+                .write_header()
+                .map_err(|e| ImageError::IoError(e.into()))?;
+            writer
+                .write_image_data(value.data())
+                .map_err(|e| ImageError::IoError(e.into()))?;
+        }
         let mut img = image::load_from_memory(&output)?;
         // png natively treats 0 as black, needs to invert it.
         img.invert();
