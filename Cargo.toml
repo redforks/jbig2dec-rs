@@ -1,6 +1,6 @@
 [package]
 name = "jbig2dec"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["messense <messense@icloud.com>"]
 description = "Rust binding to jbig2dec"
 license = "GPL-3.0"
