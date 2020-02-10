@@ -11,15 +11,13 @@ readme = "README.md"
 
 [dependencies]
 jbig2dec-sys = { version = "0.1", path = "jbig2dec-sys" }
-image = { version = "0.23", default-features = false, features = ["png"], optional = true }
 png = { version = "0.15.3", optional = true }
 
 [dev-dependencies]
 image = { version = "0.23", default-features = false, features = ["png"] }
 
 [features]
-default = ["with-image"]
-with-image = ["image", "png"]
+default = ["png"]
 
 [workspace]
 members = [

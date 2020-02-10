@@ -1,5 +1,3 @@
-#[cfg(feature = "with-image")]
-use std::convert::TryFrom;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -184,31 +182,17 @@ impl fmt::Debug for Image {
     }
 }
 
-#[cfg(feature = "with-image")]
-impl TryFrom<&Image> for image::DynamicImage {
-    type Error = image::ImageError;
-
-    fn try_from(value: &Image) -> Result<Self, Self::Error> {
-        let output = value
-            .to_png()
-            .map_err(|e| image::ImageError::IoError(e.into()))?;
-        let img = image::load_from_memory(&output)?;
-        Ok(img)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Document;
     use image::GenericImageView;
-    use std::convert::TryFrom;
 
     #[test]
     fn test_document_open() {
         let doc = Document::open("annex-h.jbig2").expect("open document failed");
         for image in doc.into_iter() {
-            let dyn_image =
-                image::DynamicImage::try_from(&image).expect("convert to DynamicImage failed");
+            let data = image.to_png().unwrap();
+            let dyn_image = image::load_from_memory(&data).expect("convert to DynamicImage failed");
             assert_eq!(dyn_image.dimensions(), (image.width(), image.height()));
         }
     }
