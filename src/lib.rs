@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -13,12 +14,26 @@ mod errors;
 
 use crate::errors::Error;
 
+thread_local! {
+    static LAST_ERROR_MSG: RefCell<Option<String>> = RefCell::new(None);
+}
+
 unsafe extern "C" fn jbig2_error_callback(
     _data: *mut c_void,
-    _msg: *const c_char,
+    msg: *const c_char,
     _severity: Jbig2Severity,
     _seg_idx: i32,
 ) {
+    use std::ffi::CStr;
+
+    if msg.is_null() {
+        return;
+    }
+    let cstr = CStr::from_ptr(msg);
+    let msg_str = cstr.to_string_lossy().into_owned();
+    LAST_ERROR_MSG.with(|e| {
+        *e.borrow_mut() = Some(msg_str);
+    });
 }
 
 /// This struct represents the document structure
@@ -46,7 +61,14 @@ impl Document {
             )
         };
         if ctx.is_null() {
-            return Err(Error::CreateContextFailed);
+            let msg = LAST_ERROR_MSG.with(|e| {
+                if let Some(err) = e.borrow_mut().take() {
+                    err
+                } else {
+                    String::new()
+                }
+            });
+            return Err(Error::CreateContextFailed(msg));
         }
         let mut content = Vec::new();
         let num_bytes = reader.read_to_end(&mut content).unwrap();
@@ -55,7 +77,14 @@ impl Document {
         }
         let code = unsafe { jbig2_complete_page(ctx) };
         if code != 0 {
-            return Err(Error::IncompletePage);
+            let msg = LAST_ERROR_MSG.with(|e| {
+                if let Some(err) = e.borrow_mut().take() {
+                    err
+                } else {
+                    String::new()
+                }
+            });
+            return Err(Error::IncompletePage(msg));
         }
         let mut images = Vec::new();
         loop {

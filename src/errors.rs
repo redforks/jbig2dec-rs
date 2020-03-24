@@ -6,8 +6,8 @@ use std::io;
 pub enum Error {
     Io(io::Error),
 
-    CreateContextFailed,
-    IncompletePage,
+    CreateContextFailed(String),
+    IncompletePage(String),
 }
 
 impl From<io::Error> for Error {
@@ -20,8 +20,8 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Error::Io(ref e) => e.fmt(f),
-            Error::CreateContextFailed => write!(f, "create context failed"),
-            Error::IncompletePage => write!(f, "incomplete page"),
+            Error::CreateContextFailed(ref e) => write!(f, "create context failed: {}", e),
+            Error::IncompletePage(ref e) => write!(f, "incomplete page: {}", e),
         }
     }
 }
