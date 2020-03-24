@@ -12,7 +12,7 @@ Add it to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-jbig2dec = "0.2"
+jbig2dec = "0.3"
 ```
 
 ## License
