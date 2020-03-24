@@ -2,6 +2,7 @@ use std::fmt;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::ops::{Index, IndexMut};
+use std::os::raw::{c_char, c_void};
 use std::path::Path;
 use std::ptr;
 use std::slice;
@@ -11,6 +12,14 @@ use jbig2dec_sys::*;
 mod errors;
 
 use crate::errors::Error;
+
+unsafe extern "C" fn jbig2_error_callback(
+    _data: *mut c_void,
+    _msg: *const c_char,
+    _severity: Jbig2Severity,
+    _seg_idx: i32,
+) {
+}
 
 /// This struct represents the document structure
 #[derive(Debug, Clone)]
@@ -32,7 +41,7 @@ impl Document {
                 ptr::null_mut(),
                 Jbig2Options::JBIG2_OPTIONS_DEFAULT,
                 ptr::null_mut(),
-                None,
+                Some(jbig2_error_callback),
                 ptr::null_mut(),
             )
         };

@@ -15,7 +15,7 @@ pub unsafe extern "C" fn jbig2_ctx_new(
         global_ctx,
         error_callback,
         error_callback_data,
-        0,
-        17,
+        JBIG2_VERSION_MAJOR as _,
+        JBIG2_VERSION_MINOR as _,
     )
 }
