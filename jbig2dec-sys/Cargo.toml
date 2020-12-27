@@ -1,6 +1,6 @@
 [package]
 name = "jbig2dec-sys"
-version = "0.18.0"
+version = "0.19.0"
 authors = ["messense <messense@icloud.com>"]
 description = "jbig2dec ffi binding"
 license = "GPL-3.0"

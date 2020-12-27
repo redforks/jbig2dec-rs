@@ -10,7 +10,7 @@ repository = "https://github.com/messense/jbig2dec-rs"
 readme = "README.md"
 
 [dependencies]
-jbig2dec-sys = { version = "0.18", path = "jbig2dec-sys" }
+jbig2dec-sys = { version = "0.19", path = "jbig2dec-sys" }
 png = { version = "0.16.1", optional = true }
 
 [dev-dependencies]
