@@ -4,7 +4,7 @@
 #![allow(non_snake_case)]
 
 pub const JBIG2_VERSION_MAJOR: u32 = 0;
-pub const JBIG2_VERSION_MINOR: u32 = 18;
+pub const JBIG2_VERSION_MINOR: u32 = 19;
 #[repr(u32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Jbig2Severity {
@@ -47,7 +47,7 @@ pub type Jbig2ErrorCallback = ::std::option::Option<
         data: *mut ::std::os::raw::c_void,
         msg: *const ::std::os::raw::c_char,
         severity: Jbig2Severity,
-        seg_idx: i32,
+        seg_idx: u32,
     ),
 >;
 #[repr(C)]

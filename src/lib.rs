@@ -22,7 +22,7 @@ unsafe extern "C" fn jbig2_error_callback(
     _data: *mut c_void,
     msg: *const c_char,
     _severity: Jbig2Severity,
-    _seg_idx: i32,
+    _seg_idx: u32,
 ) {
     use std::ffi::CStr;
 
