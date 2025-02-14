@@ -4,7 +4,7 @@ version = "0.3.1"
 authors = ["messense <messense@icloud.com>"]
 description = "Rust binding to jbig2dec"
 license = "GPL-3.0"
-edition = "2018"
+edition = "2021"
 keywords = ["image", "pdf", "jbig2", "jb2"]
 repository = "https://github.com/messense/jbig2dec-rs"
 readme = "README.md"
@@ -20,7 +20,4 @@ image = { version = "0.23", default-features = false, features = ["png"] }
 default = ["png"]
 
 [workspace]
-members = [
-    ".",
-    "jbig2dec-sys"
-]
+members = [".", "jbig2dec-sys"]
