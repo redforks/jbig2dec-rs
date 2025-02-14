@@ -1,15 +1,26 @@
-use std::cell::RefCell;
-use std::fmt;
-use std::fs::File;
-use std::io::{BufReader, Read};
-use std::ops::{Index, IndexMut};
-use std::os::raw::{c_char, c_void};
-use std::path::Path;
-use std::ptr;
-use std::slice;
-
 use jbig2dec_sys::*;
+use std::{
+    cell::RefCell,
+    fmt,
+    fs::File,
+    io::{BufReader, Read},
+    ops::{Index, IndexMut},
+    os::raw::{c_char, c_void},
+    path::Path,
+    ptr, slice,
+};
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum OpenFlag {
+    File,
+    Embedded,
+}
+
+impl Default for OpenFlag {
+    fn default() -> Self {
+        OpenFlag::File
+    }
+}
 mod errors;
 
 use crate::errors::Error;
@@ -44,17 +55,22 @@ pub struct Document {
 
 impl Document {
     /// Open a document from a path
-    pub fn open<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
+    pub fn open<P: AsRef<Path>>(path: P, flag: OpenFlag) -> Result<Self, Error> {
         let mut reader = BufReader::new(File::open(path).unwrap());
-        Self::from_reader(&mut reader)
+        Self::from_reader(&mut reader, flag)
     }
 
     /// Open a document from a `Read`
-    pub fn from_reader<R: Read>(reader: &mut R) -> Result<Self, Error> {
+    pub fn from_reader<R: Read>(reader: &mut R, flag: OpenFlag) -> Result<Self, Error> {
+        let options = match flag {
+            OpenFlag::File => Jbig2Options::JBIG2_OPTIONS_DEFAULT,
+            OpenFlag::Embedded => Jbig2Options::JBIG2_OPTIONS_EMBEDDED,
+        };
+
         let ctx = unsafe {
             jbig2_ctx_new(
                 ptr::null_mut(),
-                Jbig2Options::JBIG2_OPTIONS_DEFAULT,
+                options,
                 ptr::null_mut(),
                 Some(jbig2_error_callback),
                 ptr::null_mut(),
@@ -119,8 +135,8 @@ impl Document {
 }
 
 impl IntoIterator for Document {
-    type Item = Image;
     type IntoIter = ::std::vec::IntoIter<Self::Item>;
+    type Item = Image;
 
     fn into_iter(self) -> Self::IntoIter {
         self.images.into_iter()
@@ -222,16 +238,23 @@ impl fmt::Debug for Image {
 
 #[cfg(test)]
 mod tests {
-    use super::Document;
+    use super::*;
     use image::GenericImageView;
 
     #[test]
     fn test_document_open() {
-        let doc = Document::open("annex-h.jbig2").expect("open document failed");
+        let doc = Document::open("annex-h.jbig2", OpenFlag::File).expect("open document failed");
         for image in doc.into_iter() {
             let data = image.to_png().unwrap();
             let dyn_image = image::load_from_memory(&data).expect("convert to DynamicImage failed");
             assert_eq!(dyn_image.dimensions(), (image.width(), image.height()));
         }
+    }
+
+    #[test]
+    fn test_document_open_embedded() {
+        let doc = Document::open("embded.jbig2", super::OpenFlag::Embedded)
+            .expect("open document failed");
+        assert_eq!(1, doc.len());
     }
 }
