@@ -1,8 +1,8 @@
 [package]
-name = "jbig2dec"
+name = "nipdf-jbig2dec"
 version = "0.3.1"
-authors = ["messense <messense@icloud.com>"]
-description = "Rust binding to jbig2dec"
+authors = ["messense <messense@icloud.com>", "redforks <redforks@gmail.com>"]
+description = "Rust binding to jbig2dec, forked for nipdf to support embed jbig2 image"
 license = "GPL-3.0"
 edition = "2021"
 keywords = ["image", "pdf", "jbig2", "jb2"]
