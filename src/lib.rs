@@ -57,11 +57,15 @@ impl Document {
     /// Open a document from a path
     pub fn open<P: AsRef<Path>>(path: P, flag: OpenFlag) -> Result<Self, Error> {
         let mut reader = BufReader::new(File::open(path).unwrap());
-        Self::from_reader(&mut reader, flag)
+        Self::from_reader(&mut reader, None, flag)
     }
 
     /// Open a document from a `Read`
-    pub fn from_reader<R: Read>(reader: &mut R, flag: OpenFlag) -> Result<Self, Error> {
+    pub fn from_reader<R: Read>(
+        reader: &mut R,
+        global_stream: Option<&mut R>,
+        flag: OpenFlag,
+    ) -> Result<Self, Error> {
         let options = match flag {
             OpenFlag::File => Jbig2Options::JBIG2_OPTIONS_DEFAULT,
             OpenFlag::Embedded => Jbig2Options::JBIG2_OPTIONS_EMBEDDED,
@@ -86,11 +90,21 @@ impl Document {
             });
             return Err(Error::CreateContextFailed(msg));
         }
-        let mut content = Vec::new();
-        let num_bytes = reader.read_to_end(&mut content).unwrap();
-        unsafe {
-            jbig2_data_in(ctx, content.as_mut_ptr(), num_bytes);
+
+        if let Some(global_stream) = global_stream {
+            let mut global_content = Vec::new();
+            global_stream.read_to_end(&mut global_content).unwrap();
+            unsafe {
+                jbig2_data_in(ctx, global_content.as_mut_ptr(), global_content.len());
+            }
         }
+
+        let mut content = Vec::new();
+        reader.read_to_end(&mut content).unwrap();
+        unsafe {
+            jbig2_data_in(ctx, content.as_mut_ptr(), content.len());
+        }
+
         let code = unsafe { jbig2_complete_page(ctx) };
         if code != 0 {
             let msg = LAST_ERROR_MSG.with(|e| {
@@ -102,6 +116,7 @@ impl Document {
             });
             return Err(Error::IncompletePage(msg));
         }
+
         let mut images = Vec::new();
         loop {
             let page = unsafe { jbig2_page_out(ctx) };
@@ -112,9 +127,11 @@ impl Document {
             images.push(image);
             unsafe { jbig2_release_page(ctx, page) };
         }
+
         unsafe {
             jbig2_ctx_free(ctx);
         }
+
         Ok(Self { images })
     }
 

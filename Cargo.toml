@@ -1,6 +1,6 @@
 [package]
 name = "nipdf-jbig2dec"
-version = "0.3.1"
+version = "0.4.1"
 authors = ["messense <messense@icloud.com>", "redforks <redforks@gmail.com>"]
 description = "Rust binding to jbig2dec, forked for nipdf to support embed jbig2 image"
 license = "GPL-3.0"
